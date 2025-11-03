@@ -35,7 +35,17 @@ uv pip install google-cloud-storage pandas pillow
 ### Run Download
 
 ```bash
-python download_scin_gcs.py
+python download_scin_gcs_working.py
+```
+
+Or for a quick test with fewer images:
+
+```bash
+# Test with 100 images first
+uv run python -c "from download_scin_gcs_working import download_from_gcs; download_from_gcs(limit=100)"
+
+# Then download full dataset
+uv run python download_scin_gcs_working.py
 ```
 
 ### What It Does
@@ -48,9 +58,14 @@ python download_scin_gcs.py
 
 ### Timeline
 
-- **Download**: 30-60 minutes (10,000+ images, ~500 MB)
-- **Organization**: 5-10 minutes
-- **Total**: 35-70 minutes
+- **Download**: 45-120 minutes (10,000+ images, ~10 GB total, ~1-2 MB per image)
+- **Organization**: Automatic (included in script)
+- **Total**: 45-120 minutes
+
+**Note**: GCS download speed depends on:
+- Internet connection (parallel streams help)
+- GCS rate limiting (10,000+ small files)
+- Your machine's I/O speed
 
 ### Pros & Cons
 
