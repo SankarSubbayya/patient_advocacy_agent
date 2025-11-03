@@ -37,8 +37,11 @@ class SCINDownloader:
     def check_existing_dataset(self) -> bool:
         """Check if dataset already exists."""
         if self.dataset_dir.exists() and self.images_dir.exists():
+            # Check for images in current directory or subdirectories
             image_count = len(list(self.images_dir.glob("*.jpg"))) + \
-                         len(list(self.images_dir.glob("*.png")))
+                         len(list(self.images_dir.glob("*.png"))) + \
+                         len(list(self.images_dir.glob("*/*.jpg"))) + \
+                         len(list(self.images_dir.glob("*/*.png")))
             if image_count > 0:
                 print(f"✓ Found existing dataset with {image_count} images")
                 return True
@@ -252,10 +255,13 @@ D. Create your own dataset:
             print("✗ Images directory not found")
             return False
 
-        # Count images
+        # Count images (in current directory or subdirectories)
         images = list(self.images_dir.glob("*.jpg")) + \
                  list(self.images_dir.glob("*.png")) + \
-                 list(self.images_dir.glob("*.jpeg"))
+                 list(self.images_dir.glob("*.jpeg")) + \
+                 list(self.images_dir.glob("*/*.jpg")) + \
+                 list(self.images_dir.glob("*/*.png")) + \
+                 list(self.images_dir.glob("*/*.jpeg"))
         print(f"✓ Images found: {len(images)}")
 
         if len(images) == 0:
@@ -308,7 +314,11 @@ D. Create your own dataset:
         if self.images_dir.exists():
             info['images_count'] = len(
                 list(self.images_dir.glob("*.jpg")) +
-                list(self.images_dir.glob("*.png"))
+                list(self.images_dir.glob("*.png")) +
+                list(self.images_dir.glob("*.jpeg")) +
+                list(self.images_dir.glob("*/*.jpg")) +
+                list(self.images_dir.glob("*/*.png")) +
+                list(self.images_dir.glob("*/*.jpeg"))
             )
 
         if self.metadata_file.exists():
@@ -422,8 +432,44 @@ def main():
 
 
 if __name__ == "__main__":
+    import sys
+
     try:
-        main()
+        # Check for non-interactive mode (e.g., CI/CD)
+        if not sys.stdin.isatty():
+            print("\n" + "="*80)
+            print("Running in non-interactive mode")
+            print("="*80)
+
+            downloader = SCINDownloader()
+
+            # Check for existing data
+            print("\n✓ Checking for existing dataset locally...")
+            if downloader.check_existing_dataset():
+                print("\n✓ ✓ ✓ Dataset already exists locally! ✓ ✓ ✓")
+                print("\nUsing existing data at:", downloader.dataset_dir)
+
+                # Just validate and show info
+                if downloader.validate_dataset():
+                    info = downloader.get_dataset_info()
+                    print("\nDataset Information:")
+                    print(f"  Location: {info['dataset_dir']}")
+                    print(f"  Images: {info['images_count']}")
+                    print(f"  Conditions: {len(info['conditions'])}")
+                    print("\n✓ Dataset is ready for training!")
+                else:
+                    print("✗ Validation failed")
+                    sys.exit(1)
+            else:
+                print("\n✗ No existing dataset found and running in non-interactive mode.")
+                print("\nTo download the dataset, please:")
+                print("1. Visit: https://github.com/ISMAE-SUDA/SCIN")
+                print("2. Download the dataset")
+                print("3. Run this script in interactive mode")
+                print("\nOr manually place images in: data/scin/images/")
+                sys.exit(1)
+        else:
+            main()
     except KeyboardInterrupt:
         print("\n\nInterrupted by user")
         sys.exit(0)
