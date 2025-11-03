@@ -57,7 +57,7 @@ pip install faiss-gpu
 
 ## Quick Start
 
-See [QUICKSTART.md](QUICKSTART.md) for a 5-minute example, or run:
+See [QUICKSTART.md](docs/QUICKSTART.md) for a 5-minute example, or run:
 
 ```bash
 python example_usage.py
@@ -198,8 +198,10 @@ patient_advocacy_agent/
 │   └── api.py                   # REST API interface
 ├── tests/                        # Unit tests
 ├── docs/                         # Documentation & notebooks
+│   ├── *.md                     # All markdown documentation
+│   └── ...
 ├── example_usage.py             # Complete workflow example
-├── QUICKSTART.md                # 5-minute tutorial
+├── README.md                     # This file
 ├── pyproject.toml               # Dependencies
 └── .env                         # Environment variables
 ```
@@ -377,7 +379,7 @@ This project is part of SupportVectors AI training material. Use is limited to t
 ## Support
 
 - 📖 [Documentation](./docs/)
-- 🚀 [Quick Start](./QUICKSTART.md)
+- 🚀 [Quick Start](./docs/QUICKSTART.md)
 - 💡 [Examples](./example_usage.py)
 - 🐛 [Issue Tracker](https://github.com/supportvectors/patient_advocacy_agent/issues)
 
