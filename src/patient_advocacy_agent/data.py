@@ -171,7 +171,8 @@ class SCINDataLoader:
                 "Please download SCIN dataset first."
             )
 
-        df = pd.read_csv(metadata_path)
+        # Load metadata, ensuring image_id is string (not int)
+        df = pd.read_csv(metadata_path, dtype={'image_id': str})
 
         # Create condition labels if not present
         if 'condition_label' not in df.columns:
