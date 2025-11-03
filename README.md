@@ -279,10 +279,12 @@ pytest --cov=patient_advocacy_agent tests/
 ## Data Requirements
 
 ### SCIN Dataset
-- Download: [SCIN Dataset](https://github.com/ISMAE-SUDA/SCIN)
-- Size: ~10,000+ images
-- Format: JPG/PNG with metadata CSV
-- Required columns: image_id, image_path, condition, condition_label
+- **Official Source**: [SCIN Dataset from Google Research](https://github.com/google-research-datasets/scin)
+- **Download Command**: `python download_scin_gcs.py`
+- **Documentation**: See [DATASET_DOWNLOAD_OPTIONS.md](DATASET_DOWNLOAD_OPTIONS.md)
+- **Size**: ~10,000+ images
+- **Format**: JPG/PNG with metadata CSV
+- **Paper**: https://arxiv.org/abs/2402.18545
 
 ### Metadata CSV Format
 
@@ -363,7 +365,7 @@ pip install -e ".[dev,gpu]"
 
 ### Papers & Models
 - **SigLIP**: [Sigmoid Loss for Language Image Pre-Training](https://arxiv.org/abs/2303.15343)
-- **SCIN**: [Skin Condition Image Network](https://github.com/ISMAE-SUDA/SCIN)
+- **SCIN**: [Skin Condition Image Network](https://github.com/google-research-datasets/scin) ([Paper](https://arxiv.org/abs/2402.18545))
 - **FAISS**: [Billion-scale similarity search](https://ai.facebook.com/tools/faiss/)
 
 ### Tools & Libraries

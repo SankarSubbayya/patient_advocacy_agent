@@ -18,13 +18,15 @@ There are three main scripts to get your system ready:
 
 ### About SCIN
 
-**SCIN** (Skin Condition Image Network) is a public dataset of skin condition images with labels.
+**SCIN** (Skin Condition Image Network) is a public dataset of skin condition images with labels, hosted by Google Research.
 
 - **Size**: 10,000+ images
 - **Conditions**: Eczema, Psoriasis, Acne, Dermatitis, etc.
 - **Format**: JPEG/PNG images + metadata CSV
-- **License**: Check repository for license terms
-- **Source**: https://github.com/ISMAE-SUDA/SCIN
+- **License**: Open access for research use
+- **Source**: https://github.com/google-research-datasets/scin
+- **Storage**: Google Cloud Storage bucket `dx-scin-public-data`
+- **Paper**: https://arxiv.org/abs/2402.18545
 
 ### Run Download Script
 
@@ -527,7 +529,9 @@ Once the pipeline is complete:
 
 ## References
 
-- SCIN Dataset: https://github.com/ISMAE-SUDA/SCIN
+- SCIN Dataset: https://github.com/google-research-datasets/scin
+- SCIN Paper: https://arxiv.org/abs/2402.18545
+- Google Cloud Storage: https://cloud.google.com/storage
 - SigLIP: https://huggingface.co/google/siglip-base-patch16-224
 - FAISS: https://github.com/facebookresearch/faiss
 - Patient Advocacy Agent: See README.md
