@@ -114,9 +114,10 @@ def download_from_gcs(
                 downloaded += 1
 
                 # Add to metadata
+                # Note: image_path should be relative to the images_dir (data/scin/images/)
                 metadata.append({
                     'image_id': image_id,
-                    'image_path': f'images/{image_filename}',
+                    'image_path': image_filename,  # Just the filename, no 'images/' prefix
                     'condition': 'unlabeled',  # SCIN provides images but labels are in separate CSV
                     'split': 'train'
                 })
