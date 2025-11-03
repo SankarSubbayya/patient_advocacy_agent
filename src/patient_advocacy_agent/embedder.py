@@ -116,8 +116,8 @@ class SigLIPEmbedder(nn.Module):
         Returns:
             Image embeddings (B, projection_dim)
         """
-        with torch.no_grad():
-            outputs = self.model.get_image_features(pixel_values=images)
+        # Don't use torch.no_grad() - we need gradients for fine-tuning!
+        outputs = self.model.get_image_features(pixel_values=images)
 
         # Project to lower dimension
         embeddings = self.projection_head(outputs)
@@ -134,8 +134,8 @@ class SigLIPEmbedder(nn.Module):
             Text embeddings (B, projection_dim)
         """
         inputs = self.processor(text=texts, return_tensors="pt", padding=True)
-        with torch.no_grad():
-            outputs = self.model.get_text_features(**inputs)
+        # Don't use torch.no_grad() - we need gradients for fine-tuning!
+        outputs = self.model.get_text_features(**inputs)
 
         # Project to lower dimension
         embeddings = self.projection_head(outputs)
