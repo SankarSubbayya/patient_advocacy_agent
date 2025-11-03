@@ -116,9 +116,10 @@ def download_from_gcs(
                 # Add to metadata
                 # Note: image_path should be relative to the images_dir (data/scin/images/)
                 metadata.append({
-                    'image_id': image_id,
+                    'image_id': str(image_id),  # Ensure image_id is string
                     'image_path': image_filename,  # Just the filename, no 'images/' prefix
                     'condition': 'unlabeled',  # SCIN provides images but labels are in separate CSV
+                    'condition_label': 0,  # Default label (0 for unlabeled)
                     'split': 'train'
                 })
 
@@ -150,7 +151,7 @@ def download_from_gcs(
         metadata_csv = output_path / "metadata.csv"
 
         with open(metadata_csv, 'w', newline='') as f:
-            writer = csv.DictWriter(f, fieldnames=['image_id', 'image_path', 'condition', 'split'])
+            writer = csv.DictWriter(f, fieldnames=['image_id', 'image_path', 'condition', 'condition_label', 'split'])
             writer.writeheader()
             writer.writerows(metadata)
 
