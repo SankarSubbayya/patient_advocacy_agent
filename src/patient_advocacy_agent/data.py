@@ -12,6 +12,28 @@ from torchvision import transforms
 from pydantic import BaseModel, Field
 
 
+def custom_collate_fn(batch):
+    """Custom collate function that handles None values gracefully."""
+    # Default collate for most fields
+    result = {}
+    for key in batch[0].keys():
+        values = [item[key] for item in batch]
+
+        # Skip None values in description field
+        if key == 'description':
+            # Replace None with empty string for text descriptions
+            values = [v if v is not None else f"A skin condition image" for v in values]
+
+        # Try default collate
+        try:
+            result[key] = torch.utils.data.dataloader.default_collate([{key: v} for v in values])[key]
+        except TypeError:
+            # If it fails, just stack as list
+            result[key] = values
+
+    return result
+
+
 class ImageMetadata(BaseModel):
     """Metadata for a skin condition image."""
     image_id: str
@@ -235,25 +257,28 @@ class SCINDataLoader:
             images_path, splits['test']
         )
 
-        # Create dataloaders
+        # Create dataloaders with custom collate function
         dataloaders = {
             'train': DataLoader(
                 self.train_dataset,
                 batch_size=self.batch_size,
                 shuffle=True,
-                num_workers=self.num_workers
+                num_workers=self.num_workers,
+                collate_fn=custom_collate_fn
             ),
             'val': DataLoader(
                 self.val_dataset,
                 batch_size=self.batch_size,
                 shuffle=False,
-                num_workers=self.num_workers
+                num_workers=self.num_workers,
+                collate_fn=custom_collate_fn
             ),
             'test': DataLoader(
                 self.test_dataset,
                 batch_size=self.batch_size,
                 shuffle=False,
-                num_workers=self.num_workers
+                num_workers=self.num_workers,
+                collate_fn=custom_collate_fn
             )
         }
 
