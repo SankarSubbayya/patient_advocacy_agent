@@ -100,20 +100,12 @@ class SkinConditionDataset(Dataset):
         if self.transform:
             image = self.transform(image)
 
-        # Prepare metadata dict, excluding None values
-        metadata_dict = {}
-        for k, v in row.items():
-            if k in ImageMetadata.__fields__:
-                # Skip NaN/None values for optional fields
-                if pd.notna(v):
-                    metadata_dict[k] = v
-
         return {
             'image': image,
             'label': int(row['condition_label']),
             'condition': row['condition'],
             'image_id': row['image_id'],
-            'metadata': ImageMetadata(**metadata_dict).model_dump()
+            'description': row.get('description') if pd.notna(row.get('description')) else None
         }
 
 
