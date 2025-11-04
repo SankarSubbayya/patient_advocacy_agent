@@ -41,13 +41,6 @@ from .rag import (
     RetrievedCase
 )
 
-from .agent import (
-    MedGeminiAgent,
-    PatientCase,
-    AssessmentResult,
-    PhysicianReport
-)
-
 from .api import (
     PatientAssessmentAPI,
     PatientAssessmentRequest,
@@ -70,10 +63,6 @@ __all__ = [
     "CaseRetriever",
     "MedicalKnowledgeBase",
     "RetrievedCase",
-    "MedGeminiAgent",
-    "PatientCase",
-    "AssessmentResult",
-    "PhysicianReport",
     "PatientAssessmentAPI",
     "PatientAssessmentRequest",
     "ReportExportRequest"

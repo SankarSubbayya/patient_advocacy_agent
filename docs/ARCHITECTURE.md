@@ -1,11 +1,11 @@
-# Patient Advocacy Agent - Technical Architecture
+# Skin Condition Assessment System - Technical Architecture
 
 ## System Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Patient Advocacy Agent                       │
-│              Dermatology Assessment & Reporting                 │
+│               Skin Condition Assessment System                  │
+│         Vision-Language Embeddings + Medical Knowledge          │
 └─────────────────────────────────────────────────────────────────┘
 
                               INPUT LAYER
@@ -31,15 +31,7 @@
 │  └──────────────────────┬──────────────────────────────────┘   │
 │                         │                                       │
 │  ┌──────────────────────▼───────────────────────────────────┐   │
-│  │  3. ASSESSMENT ENGINE (MedGemini Agent)                 │   │
-│  │     - Identify suspected conditions                     │   │
-│  │     - Compute confidence scores                         │   │
-│  │     - Analyze risk factors                              │   │
-│  │     - Generate recommendations                          │   │
-│  └──────────────────────┬──────────────────────────────────┘   │
-│                         │                                       │
-│  ┌──────────────────────▼───────────────────────────────────┐   │
-│  │  4. REPORT GENERATION (API)                             │   │
+│  │  3. REPORT GENERATION (API)                             │   │
 │  │     - Format assessment results                         │   │
 │  │     - Add clinical context                              │   │
 │  │     - Export in multiple formats                        │   │
@@ -49,7 +41,7 @@
                           │
                     OUTPUT LAYER
 ┌─────────────────────────────────────────────────────────────────┐
-│  Physician Report  │  Similar Cases  │  Recommendations  │ JSON │
+│  Similarity Results  │  Medical Context  │  Structured Data     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -146,6 +138,11 @@ Validation →
 Early Stopping
 ```
 
+**Key Classes**:
+- `ContrastiveLoss`: InfoNCE loss implementation
+- `SigLIPEmbedder`: Vision-language model wrapper
+- `EmbedderTrainer`: Training orchestration
+
 ---
 
 ### Layer 3: Indexing Layer (`clustering.py`)
@@ -185,6 +182,11 @@ Compute L2 Distances →
 Convert to Similarity Scores →
 Return Top-K Results
 ```
+
+**Key Classes**:
+- `SimilarityIndex`: FAISS wrapper for similarity search
+- `ImageClusterer`: K-means clustering
+- `ConditionBasedGrouping`: Organize by condition
 
 ---
 
@@ -231,57 +233,15 @@ Combine Results →
 Context for Assessment
 ```
 
----
-
-### Layer 5: Assessment Layer (`agent.py`)
-
-**Purpose**: Intelligent clinical assessment
-
-```
-┌────────────────────────────────────┐
-│  Patient Information                │
-│  - Image Embedding                 │
-│  - Symptoms                        │
-│  - Age, Gender, History            │
-└───────────────┬────────────────────┘
-                │
-        ┌───────▼────────┐
-        │ MedGemini      │
-        │ Agent          │
-        └───┬────────────┘
-            │
-    ┌───────┴───────┐
-    │               │
-┌───▼─────┐    ┌───▼──────┐
-│Condition│    │Risk       │
-│Identify │    │Factor     │
-│ + Score │    │Analysis   │
-└───┬─────┘    └───┬──────┘
-    │               │
-    └───┬───────────┘
-        │
-    ┌───▼──────────┐
-    │Recommendation│
-    │Generation    │
-    └───┬──────────┘
-        │
-    ┌───▼─────────────┐
-    │Assessment Result│
-    │(JSON/Object)    │
-    └─────────────────┘
-```
-
-**Assessment Logic**:
-```
-Symptoms → Pattern Match → Suspected Conditions (Ranked)
-         + Medical Knowledge → Risk Factor Analysis
-         + Similar Cases → Context & Precedent
-         = Clinical Recommendations
-```
+**Key Classes**:
+- `CaseRetriever`: Similar case lookup
+- `MedicalKnowledgeBase`: Document management
+- `RAGPipeline`: Combines retrieval sources
+- `RetrievedCase`: Case representation
 
 ---
 
-### Layer 6: API Layer (`api.py`)
+### Layer 5: API Layer (`api.py`)
 
 **Purpose**: REST interface for deployment
 
@@ -297,9 +257,9 @@ Symptoms → Pattern Match → Suspected Conditions (Ranked)
         └───┬─────────────┬──────────┘
             │             │
         ┌───▼─┐    ┌──────▼──────┐
-        │Assess│    │Generate     │
-        │Patient│    │Physician    │
-        │      │    │Report       │
+        │Assess│    │Export       │
+        │Patient│    │Report       │
+        │      │    │             │
         └───┬──┘    └──────┬──────┘
             │              │
         ┌───┴──────────────┴────┐
@@ -320,7 +280,7 @@ Symptoms → Pattern Match → Suspected Conditions (Ranked)
 POST /assess →
 Validate Request →
 Process Image →
-Run Assessment →
+Search Similar Cases →
 Return JSON ✓
 
 POST /report →
@@ -334,6 +294,11 @@ Load Assessments →
 Compile History →
 Return Array ✓
 ```
+
+**Key Classes**:
+- `PatientAssessmentAPI`: Main API class
+- `PatientAssessmentRequest`: Request validation
+- `ReportExportRequest`: Export configuration
 
 ---
 
@@ -422,11 +387,10 @@ Return Array ✓
     └──────┬────────────────┘
            │
     ┌──────▼────────────────┐
-    │ MedGemini Assessment  │
+    │ Format Assessment     │
     │ - Condition ID        │
-    │ - Confidence Scores   │
-    │ - Risk Factors        │
-    │ - Recommendations     │
+    │ - Similar Cases       │
+    │ - Medical Context     │
     └──────┬────────────────┘
            │
     ┌──────▼────────────────┐
@@ -436,7 +400,7 @@ Return Array ✓
     └──────┬────────────────┘
            │
     ┌──────▼────────────────┐
-    │ Physician Report      │
+    │ Assessment Report     │
     │ JSON/TXT/PDF          │
     └───────────────────────┘
 ```
@@ -542,6 +506,32 @@ Logging & Audit Trail
 1. Modify ContrastiveLoss class
 2. Implement new loss
 3. Train with new loss
+
+---
+
+## Project Structure
+
+```
+patient_advocacy_agent/
+├── src/patient_advocacy_agent/
+│   ├── __init__.py              # Package exports
+│   ├── data.py                  # Data loading & preprocessing
+│   ├── embedder.py              # SigLIP embedder & training
+│   ├── clustering.py            # FAISS indexing & search
+│   ├── rag.py                   # Knowledge retrieval
+│   └── api.py                   # REST API interface
+├── models/                      # Trained models
+│   ├── embedder/                # SigLIP embedder weights
+│   ├── similarity_index/        # FAISS indices
+│   └── rag_pipeline/            # RAG system files
+├── data/                        # Datasets
+│   └── scin/                    # SCIN dataset
+├── docs/                        # Documentation
+├── example_usage.py             # Usage example
+├── train_embedder.py            # Training script
+├── build_index.py               # Index building script
+└── config.yaml                  # Configuration
+```
 
 ---
 

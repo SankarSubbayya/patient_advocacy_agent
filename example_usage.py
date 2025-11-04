@@ -25,11 +25,12 @@ from patient_advocacy_agent import (
     CaseRetriever,
     MedicalKnowledgeBase,
     RAGPipeline,
-    MedGeminiAgent,
     PatientAssessmentAPI,
     PatientAssessmentRequest,
     ReportExportRequest
 )
+
+# Note: MedGeminiAgent has been removed from the project
 
 # LangChain Document import with fallback
 try:
@@ -208,26 +209,20 @@ def setup_rag_system(metadata_df, embeddings: np.ndarray):
 
 
 def create_agent_and_api(embedder, rag_pipeline, similarity_index):
-    """Create the MedGemini agent and API."""
+    """Create the Patient Assessment API."""
     print("\n" + "="*80)
-    print("STEP 6: Creating MedGemini agent and API")
+    print("STEP 6: Creating Patient Assessment API")
     print("="*80)
 
-    agent = MedGeminiAgent(
-        embedder=embedder,
-        rag_pipeline=rag_pipeline,
-        clustering_index=similarity_index
-    )
-    print("✓ MedGemini agent initialized")
+    # Note: MedGeminiAgent has been removed from this project
+    # This function is kept for reference but will not execute
+    print("⚠ Note: MedGeminiAgent has been removed from the project")
+    print("✓ Patient Assessment API class is still available")
 
-    api = PatientAssessmentAPI(
-        agent=agent,
-        embedder=embedder,
-        storage_dir=Path("./reports")
-    )
-    print("✓ Patient Assessment API initialized")
+    # api = PatientAssessmentAPI would require an agent instance
+    # which is no longer available in the current version
 
-    return agent, api
+    return None, None
 
 
 def run_patient_assessment(api: PatientAssessmentAPI):
@@ -394,18 +389,24 @@ def main():
         rag_pipeline = setup_rag_system(metadata_df, embeddings)
 
         # Step 6: Create agent and API
+        # Note: Agent functionality has been removed from this project
         agent, api = create_agent_and_api(embedder, rag_pipeline, similarity_index)
 
-        # Step 7: Run assessment
-        assessment = run_patient_assessment(api)
+        # Steps 7-9: Assessment, reporting, and history are skipped
+        # because they require the MedGeminiAgent which has been removed
+        if api is not None:
+            # Step 7: Run assessment
+            assessment = run_patient_assessment(api)
 
-        # Step 8: Generate report
-        if assessment:
-            report_id = generate_and_export_report(api, "PAT001")
+            # Step 8: Generate report
+            if assessment:
+                report_id = generate_and_export_report(api, "PAT001")
 
-            # Step 9: Get assessment history
-            if report_id:
-                get_assessment_history(api, "PAT001")
+                # Step 9: Get assessment history
+                if report_id:
+                    get_assessment_history(api, "PAT001")
+        else:
+            print("\n⚠ Skipping assessment steps - API initialization failed due to removed agent")
 
         # Summary
         print("\n" + "="*80)

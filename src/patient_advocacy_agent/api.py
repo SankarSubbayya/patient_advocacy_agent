@@ -10,12 +10,14 @@ from pydantic import BaseModel, Field, validator
 from PIL import Image
 import io
 
-from .agent import (
-    MedGeminiAgent,
-    PatientCase,
-    AssessmentResult,
-    PhysicianReport
-)
+# Agent-related classes have been removed from this project
+# These imports are no longer available:
+# from .agent import (
+#     MedGeminiAgent,
+#     PatientCase,
+#     AssessmentResult,
+#     PhysicianReport
+# )
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +63,7 @@ class PatientAssessmentAPI:
 
     def __init__(
         self,
-        agent: MedGeminiAgent,
+        agent,  # MedGeminiAgent (now removed from project)
         embedder,
         storage_dir: Optional[Path] = None
     ):
@@ -69,7 +71,7 @@ class PatientAssessmentAPI:
         Initialize API.
 
         Args:
-            agent: MedGeminiAgent instance
+            agent: Agent instance (MedGeminiAgent has been removed)
             embedder: SigLIPEmbedder instance
             storage_dir: Directory to store reports and assessments
         """

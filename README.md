@@ -1,16 +1,16 @@
-# Patient Advocacy Agent - Dermatology Assessment System
+# Skin Condition Assessment System
 
-A comprehensive AI system for skin condition assessment, using fine-tuned vision-language models, medical knowledge retrieval, and clinical decision support.
+A comprehensive AI system for dermatological image analysis, using fine-tuned vision-language models and medical knowledge retrieval to provide clinical decision support.
 
 ## Overview
 
-The patient advocacy agent combines cutting-edge machine learning techniques with clinical expertise to provide:
+The system combines cutting-edge machine learning with clinical expertise to provide:
 
 - **Visual Analysis**: Fine-tuned SigLIP embeddings for skin condition image analysis
 - **Similarity Matching**: FAISS-based fast retrieval of similar historical cases
 - **Medical Knowledge**: RAG system for evidence-based information retrieval
-- **Clinical Assessment**: MedGemini agent for intelligent patient evaluation
-- **Physician Reports**: Formatted reports with recommendations and similar case references
+- **Structured Assessment**: Comprehensive analysis with similar cases and medical context
+- **Clinical Reports**: Formatted reports with similar case references
 
 ### Key Features
 
@@ -19,8 +19,7 @@ The patient advocacy agent combines cutting-edge machine learning techniques wit
 - **SCIN Dataset Integration**: Works with the Skin Condition Image Network dataset
 - **FAISS Similarity Search**: Fast retrieval of top-5 visually similar cases
 - **RAG Pipeline**: Retrieves relevant medical knowledge and case information
-- **Physician Reports**: Structured output with evidence-based recommendations
-- **REST API**: Ready for clinical deployment
+- **REST API**: Ready for deployment
 
 ## Installation
 
@@ -68,22 +67,23 @@ python example_usage.py
 ```
 Patient Case (Image + Symptoms)
     ↓
-[SigLIP Embedder] → Image Embedding
+[SigLIP Embedder] → Image Embedding (512D)
     ↓
 ┌─────────────────────────────────┐
 │  [FAISS Index] + [RAG System]  │
 │  - Similar Cases               │
 │  - Medical Knowledge           │
+│  - Condition Matching          │
 └─────────────────────────────────┘
-    ↓
-[MedGemini Agent]
     ↓
 [Assessment Results]
     ↓
-[Physician Report]
+[Clinical Report]
     ↓
-Multiple Formats (JSON, TXT, PDF)
+Multiple Formats (JSON, TXT)
 ```
+
+For detailed architecture information, see [ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Components
 
@@ -139,21 +139,7 @@ rag = RAGPipeline(retriever, kb)
 context = rag.retrieve_context(condition, symptoms)
 ```
 
-### 5. **Assessment Agent** (`agent.py`)
-- Intelligent patient assessment
-- Condition identification from symptoms
-- Risk factor analysis
-- Recommendation generation
-
-```python
-from patient_advocacy_agent import MedGeminiAgent, PatientCase
-
-agent = MedGeminiAgent(embedder, rag_pipeline, index)
-assessment = agent.assess_patient(patient_case)
-report = agent.generate_physician_report(assessment, patient_case)
-```
-
-### 6. **REST API** (`api.py`)
+### 5. **REST API** (`api.py`)
 - Patient assessment requests
 - Report generation and export
 - Assessment history retrieval
@@ -164,7 +150,7 @@ from patient_advocacy_agent import PatientAssessmentAPI, PatientAssessmentReques
 api = PatientAssessmentAPI(agent, embedder)
 request = PatientAssessmentRequest(patient_id="P001", age=35, ...)
 result = api.assess_patient(request)
-report = api.generate_physician_report("P001")
+history = api.get_assessment_history("P001")
 ```
 
 ## Workflow
@@ -180,9 +166,8 @@ report = api.generate_physician_report("P001")
 
 1. **Patient Input**: Provide patient image and symptoms
 2. **Extract Features**: Get image embedding from fine-tuned model
-3. **Retrieve Context**: Find similar cases and medical knowledge
-4. **Run Assessment**: MedGemini agent analyzes information
-5. **Generate Report**: Create physician-ready report
+3. **Retrieve Context**: Find similar cases and medical knowledge using FAISS and RAG
+4. **Generate Report**: Create structured assessment with similar cases and medical context
 
 ## File Structure
 
@@ -194,7 +179,6 @@ patient_advocacy_agent/
 │   ├── embedder.py              # SigLIP embedder & training
 │   ├── clustering.py            # Similarity & clustering
 │   ├── rag.py                   # RAG pipeline
-│   ├── agent.py                 # MedGemini agent
 │   └── api.py                   # REST API interface
 ├── tests/                        # Unit tests
 ├── docs/                         # Documentation & notebooks
