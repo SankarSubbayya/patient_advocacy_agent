@@ -64,12 +64,33 @@ def download_from_gcs(
     print("-" * 80)
 
     try:
-        storage_client = storage.Client(project=project_id)
+        # Try anonymous access first for public bucket
+        print("Attempting anonymous access to public bucket...")
+        storage_client = storage.Client.create_anonymous_client()
         bucket = storage_client.bucket(bucket_name)
-        print(f"✓ Connected to bucket: {bucket_name}")
+        
+        # Test connection by listing one file
+        test_blobs = list(bucket.list_blobs(prefix="dataset/", max_results=1))
+        if test_blobs:
+            print(f"✓ Connected to bucket: {bucket_name} (anonymous access)")
+        else:
+            raise Exception("No files found in bucket")
+            
     except Exception as e:
-        print(f"✗ Failed to connect: {e}")
-        return False
+        print(f"⚠ Anonymous access failed: {e}")
+        print("Trying authenticated access...")
+        
+        try:
+            # Fall back to authenticated access
+            storage_client = storage.Client(project=project_id)
+            bucket = storage_client.bucket(bucket_name)
+            print(f"✓ Connected to bucket: {bucket_name} (authenticated)")
+        except Exception as e2:
+            print(f"✗ Failed to connect: {e2}")
+            print("\nAuthentication required. Options:")
+            print("1. Run: gcloud auth application-default login")
+            print("2. Or set: GOOGLE_APPLICATION_CREDENTIALS=/path/to/key.json")
+            return False
 
     print("\nStep 2: Listing dataset images")
     print("-" * 80)

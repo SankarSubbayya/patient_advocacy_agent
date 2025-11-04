@@ -17,6 +17,7 @@ import logging
 from pathlib import Path
 from datetime import datetime
 import json
+import yaml
 
 from patient_advocacy_agent import (
     SCINDataLoader,
@@ -32,35 +33,70 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+def load_config(config_path: str = "config.yaml") -> dict:
+    """Load configuration from YAML file."""
+    try:
+        config_file = Path(config_path)
+        if not config_file.exists():
+            logger.warning(f"Config file not found: {config_path}, using defaults")
+            return {}
+        
+        with open(config_file, 'r') as f:
+            config = yaml.safe_load(f)
+        logger.info(f"✓ Config loaded from {config_path}")
+        return config
+    except Exception as e:
+        logger.warning(f"Failed to load config: {e}, using defaults")
+        return {}
+
+
 class TrainingConfig:
     """Training configuration."""
 
-    def __init__(self):
-        # Paths
-        self.data_dir = Path("./data/scin")
-        self.model_dir = Path("./models/embedder")
-        self.checkpoint_dir = self.model_dir / "checkpoints"
-        self.final_dir = self.model_dir / "final"
+    def __init__(self, config_path: str = "config.yaml"):
+        # Load config from YAML
+        config = load_config(config_path)
+        
+        # Paths - read from config.yaml with fallbacks
+        data_config = config.get('data', {})
+        model_config = config.get('models', {})
+        embedder_config = model_config.get('embedder', {})
+        training_config = config.get('training', {})
+        embeddings_config = config.get('embeddings', {})
+        
+        self.data_dir = Path(data_config.get('scin_dir', './data/scin'))
+        self.model_dir = Path(embedder_config.get('dir', './models/embedder'))
+        self.checkpoint_dir = Path(embedder_config.get('checkpoints_dir', 
+                                                        self.model_dir / 'checkpoints'))
+        self.final_dir = Path(embedder_config.get('final_dir', 
+                                                   self.model_dir / 'final'))
 
-        # Dataset
-        self.batch_size = 32
-        self.num_workers = 0  # Set to 0 for MPS
-        self.test_split = 0.2
-        self.val_split = 0.1
+        # Dataset - read from config.yaml with fallbacks
+        self.batch_size = training_config.get('batch_size', 32)
+        self.num_workers = embeddings_config.get('num_workers', 0)  # Set to 0 for MPS
+        self.test_split = data_config.get('test_split', 0.2)
+        self.val_split = data_config.get('val_split', 0.1)
 
-        # Model
-        self.model_name = "google/siglip-base-patch16-224"
-        self.projection_dim = 512
-        self.freeze_backbone = False
+        # Model - read from config.yaml with fallbacks
+        self.model_name = embedder_config.get('model_name', 'google/siglip-base-patch16-224')
+        self.projection_dim = embedder_config.get('projection_dim', 512)
+        self.freeze_backbone = embedder_config.get('freeze_backbone', False)
 
-        # Training
-        self.num_epochs = 20
-        self.learning_rate = 1e-4
-        self.weight_decay = 1e-5
-        self.early_stopping_patience = 3
+        # Training - read from config.yaml with fallbacks
+        self.num_epochs = training_config.get('num_epochs', 20)
+        self.learning_rate = training_config.get('learning_rate', 1e-4)
+        self.weight_decay = training_config.get('weight_decay', 1e-5)
+        self.early_stopping_patience = training_config.get('early_stopping_patience', 3)
 
-        # Device
-        self.device = self._get_device()
+        # Device - check config first, then auto-detect
+        device_config = config.get('device', {})
+        device_type = device_config.get('type', 'auto')
+        
+        if device_type == 'auto':
+            self.device = self._get_device()
+        else:
+            self.device = device_type
+            logger.info(f"Using device from config: {self.device}")
 
     def _get_device(self) -> str:
         """Get best available device."""
@@ -89,14 +125,17 @@ def setup_training() -> tuple:
     config = TrainingConfig()
 
     print("\n" + "="*80)
-    print("Training Configuration")
+    print("Training Configuration (from config.yaml)")
     print("="*80)
     print(f"Device: {config.device}")
     print(f"Data dir: {config.data_dir}")
+    print(f"Model dir: {config.model_dir}")
     print(f"Batch size: {config.batch_size}")
     print(f"Epochs: {config.num_epochs}")
     print(f"Model: {config.model_name}")
+    print(f"Projection dim: {config.projection_dim}")
     print(f"Learning rate: {config.learning_rate}")
+    print(f"Test split: {config.test_split}, Val split: {config.val_split}")
 
     # Create directories
     config.checkpoint_dir.mkdir(parents=True, exist_ok=True)

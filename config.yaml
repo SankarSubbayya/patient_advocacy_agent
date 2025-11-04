@@ -11,3 +11,67 @@
 
 cohort: Spring 2025
 
+# Data Configuration
+data:
+  # Main dataset directory
+  base_dir: ../data
+  
+  # SCIN (Skin Condition Image Network) dataset
+  scin_dir: ../data/scin
+  images_dir: ../data/scin/images
+  metadata_file: ../data/scin/metadata.csv
+  
+  # Dataset splits
+  test_split: 0.2
+  val_split: 0.1
+
+# Model Configuration
+models:
+  # Base model directory
+  base_dir: ../models
+  
+  # SigLIP embedder model
+  embedder:
+    dir: ../models/embedder
+    checkpoints_dir: ../models/embedder/checkpoints
+    final_dir: ../models/embedder/final
+    model_path: ../models/embedder/final/embedder.pt
+    model_name: google/siglip-base-patch16-224
+    projection_dim: 512
+  
+  # Similarity index (FAISS)
+  similarity_index:
+    dir: ../models/similarity_index
+    
+  # RAG pipeline
+  rag_pipeline:
+    dir: ../models/rag_pipeline
+
+# Embeddings Configuration
+embeddings:
+  # Embeddings are stored within the similarity index
+  index_dir: ../models/similarity_index
+  
+  # Embedding extraction settings
+  batch_size: 32
+  num_workers: 0  # Set to 0 for MPS (Apple Silicon)
+
+# Training Configuration
+training:
+  batch_size: 32
+  num_epochs: 20
+  learning_rate: 0.0001
+  weight_decay: 0.00001
+  early_stopping_patience: 3
+  
+# Device Configuration
+device:
+  # auto, mps, cuda, or cpu
+  type: auto  # Automatically selects best available device
+
+# Claude API Configuration
+claude:
+  model: claude-3-5-sonnet-20241022  # Latest Claude model
+  max_tokens: 1024
+  temperature: 0.7
+  # API key should be set as environment variable: ANTHROPIC_API_KEY

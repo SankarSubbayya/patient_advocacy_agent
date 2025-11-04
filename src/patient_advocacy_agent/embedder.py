@@ -134,6 +134,10 @@ class SigLIPEmbedder(nn.Module):
             Text embeddings (B, projection_dim)
         """
         inputs = self.processor(text=texts, return_tensors="pt", padding=True)
+        
+        # Move inputs to the same device as the model
+        inputs = {k: v.to(self.model.device) for k, v in inputs.items()}
+        
         # Don't use torch.no_grad() - we need gradients for fine-tuning!
         outputs = self.model.get_text_features(**inputs)
 

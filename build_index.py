@@ -19,6 +19,7 @@ import logging
 from pathlib import Path
 from datetime import datetime
 import json
+import yaml
 
 from patient_advocacy_agent import (
     SCINDataLoader,
@@ -49,21 +50,58 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+def load_config(config_path: str = "config.yaml") -> dict:
+    """Load configuration from YAML file."""
+    try:
+        config_file = Path(config_path)
+        if not config_file.exists():
+            logger.warning(f"Config file not found: {config_path}, using defaults")
+            return {}
+        
+        with open(config_file, 'r') as f:
+            config = yaml.safe_load(f)
+        logger.info(f"✓ Config loaded from {config_path}")
+        return config
+    except Exception as e:
+        logger.warning(f"Failed to load config: {e}, using defaults")
+        return {}
+
+
 class IndexConfig:
     """Index building configuration."""
 
-    def __init__(self):
-        # Paths
-        self.data_dir = Path("./data/scin")
-        self.model_dir = Path("./models")
-        self.embedder_path = self.model_dir / "embedder" / "final" / "embedder.pt"
-        self.index_dir = self.model_dir / "similarity_index"
-        self.rag_dir = self.model_dir / "rag_pipeline"
+    def __init__(self, config_path: str = "config.yaml"):
+        # Load config from YAML
+        config = load_config(config_path)
+        
+        # Extract config sections
+        data_config = config.get('data', {})
+        model_config = config.get('models', {})
+        embedder_config = model_config.get('embedder', {})
+        embeddings_config = config.get('embeddings', {})
+        
+        # Paths - read from config.yaml with fallbacks
+        self.data_dir = Path(data_config.get('scin_dir', './data/scin'))
+        self.model_dir = Path(model_config.get('base_dir', './models'))
+        self.embedder_path = Path(embedder_config.get('model_path', 
+                                                       './models/embedder/final/embedder.pt'))
+        self.index_dir = Path(model_config.get('similarity_index', {}).get('dir', 
+                                                                            './models/similarity_index'))
+        self.rag_dir = Path(model_config.get('rag_pipeline', {}).get('dir', 
+                                                                      './models/rag_pipeline'))
 
-        # Settings
-        self.device = self._get_device()
-        self.batch_size = 32
-        self.num_workers = 0  # Set to 0 for MPS
+        # Settings - read from config.yaml with fallbacks
+        device_config = config.get('device', {})
+        device_type = device_config.get('type', 'auto')
+        
+        if device_type == 'auto':
+            self.device = self._get_device()
+        else:
+            self.device = device_type
+            logger.info(f"Using device from config: {self.device}")
+        
+        self.batch_size = embeddings_config.get('batch_size', 32)
+        self.num_workers = embeddings_config.get('num_workers', 0)  # Set to 0 for MPS
         self.use_gpu_index = torch.cuda.is_available() or torch.backends.mps.is_available()
 
     def _get_device(self) -> str:
@@ -347,10 +385,12 @@ def main():
 
     config = IndexConfig()
 
-    print(f"\nConfiguration:")
+    print(f"\nConfiguration (from config.yaml):")
     print(f"  Data dir: {config.data_dir}")
     print(f"  Embedder: {config.embedder_path}")
     print(f"  Index dir: {config.index_dir}")
+    print(f"  RAG dir: {config.rag_dir}")
+    print(f"  Batch size: {config.batch_size}")
     print(f"  Device: {config.device}")
 
     # Load embedder
