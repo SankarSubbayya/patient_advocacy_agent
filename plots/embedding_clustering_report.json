@@ -1,0 +1,138 @@
+{
+  "model_path": "/home/sankar/models/embedder_real_labels/final/embedder_labeled_full.pt",
+  "num_samples": 6517,
+  "num_conditions": 211,
+  "embedding_dimension": 512,
+  "clustering_metrics": {
+    "silhouette_score": 0.23023970425128937,
+    "adjusted_rand_index": 0.0030703963396929625,
+    "normalized_mutual_info": 0.2453062402988297,
+    "homogeneity": 0.2903489536313449,
+    "completeness": 0.21236189567488328,
+    "v_measure": 0.2453062402988297,
+    "average_cluster_purity": 0.22477720020768835,
+    "perfect_clusters": 6
+  },
+  "top_conditions": [
+    {
+      "condition": "Eczema",
+      "total_samples": 1079,
+      "num_clusters": 174,
+      "largest_cluster_pct": 0.017608897126969416
+    },
+    {
+      "condition": "Allergic Contact Dermatitis",
+      "total_samples": 590,
+      "num_clusters": 161,
+      "largest_cluster_pct": 0.01864406779661017
+    },
+    {
+      "condition": "Urticaria",
+      "total_samples": 442,
+      "num_clusters": 132,
+      "largest_cluster_pct": 0.049773755656108594
+    },
+    {
+      "condition": "Insect Bite",
+      "total_samples": 401,
+      "num_clusters": 145,
+      "largest_cluster_pct": 0.02743142144638404
+    },
+    {
+      "condition": "Folliculitis",
+      "total_samples": 306,
+      "num_clusters": 125,
+      "largest_cluster_pct": 0.032679738562091505
+    },
+    {
+      "condition": "Psoriasis",
+      "total_samples": 234,
+      "num_clusters": 118,
+      "largest_cluster_pct": 0.021367521367521368
+    },
+    {
+      "condition": "Tinea",
+      "total_samples": 211,
+      "num_clusters": 117,
+      "largest_cluster_pct": 0.02843601895734597
+    },
+    {
+      "condition": "Impetigo",
+      "total_samples": 136,
+      "num_clusters": 85,
+      "largest_cluster_pct": 0.029411764705882353
+    },
+    {
+      "condition": "Herpes Zoster",
+      "total_samples": 130,
+      "num_clusters": 84,
+      "largest_cluster_pct": 0.038461538461538464
+    },
+    {
+      "condition": "Drug Rash",
+      "total_samples": 129,
+      "num_clusters": 84,
+      "largest_cluster_pct": 0.031007751937984496
+    },
+    {
+      "condition": "Pigmented purpuric eruption",
+      "total_samples": 128,
+      "num_clusters": 86,
+      "largest_cluster_pct": 0.0234375
+    },
+    {
+      "condition": "Acne",
+      "total_samples": 123,
+      "num_clusters": 87,
+      "largest_cluster_pct": 0.032520325203252036
+    },
+    {
+      "condition": "Herpes Simplex",
+      "total_samples": 109,
+      "num_clusters": 66,
+      "largest_cluster_pct": 0.027522935779816515
+    },
+    {
+      "condition": "CD - Contact dermatitis",
+      "total_samples": 98,
+      "num_clusters": 71,
+      "largest_cluster_pct": 0.030612244897959183
+    },
+    {
+      "condition": "Pityriasis rosea",
+      "total_samples": 93,
+      "num_clusters": 57,
+      "largest_cluster_pct": 0.053763440860215055
+    },
+    {
+      "condition": "Acute dermatitis, NOS",
+      "total_samples": 93,
+      "num_clusters": 62,
+      "largest_cluster_pct": 0.06451612903225806
+    },
+    {
+      "condition": "Keratosis pilaris",
+      "total_samples": 77,
+      "num_clusters": 58,
+      "largest_cluster_pct": 0.03896103896103896
+    },
+    {
+      "condition": "Tinea Versicolor",
+      "total_samples": 72,
+      "num_clusters": 46,
+      "largest_cluster_pct": 0.08333333333333333
+    },
+    {
+      "condition": "Irritant Contact Dermatitis",
+      "total_samples": 72,
+      "num_clusters": 53,
+      "largest_cluster_pct": 0.05555555555555555
+    },
+    {
+      "condition": "Lichen Simplex Chronicus",
+      "total_samples": 69,
+      "num_clusters": 50,
+      "largest_cluster_pct": 0.057971014492753624
+    }
+  ]
+}

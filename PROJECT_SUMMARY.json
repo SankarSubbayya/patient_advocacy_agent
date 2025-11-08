@@ -1,0 +1,30 @@
+{
+  "timestamp": "2025-11-07T09:56:54.202267",
+  "directories": {
+    "experiments": 1,
+    "experiments/contrastive": 3,
+    "experiments/hierarchical": 3,
+    "experiments/fine_grained": 2,
+    "experiments/analysis": 8,
+    "logs": 8,
+    "plots": 8,
+    "utils": 13,
+    "archive": 9
+  },
+  "models": {
+    "siglip_hierarchical": {
+      "approach": "hierarchical",
+      "accuracy": 0
+    },
+    "siglip_contrastive": {
+      "approach": "unknown",
+      "accuracy": 0.2
+    },
+    "siglip_fine_grained": {
+      "approach": "fine_grained",
+      "accuracy": 0.2
+    }
+  },
+  "total_files": 55,
+  "total_size_mb": 8138
+}

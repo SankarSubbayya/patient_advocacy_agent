@@ -194,31 +194,55 @@ class SCINDataLoader:
         df = pd.read_csv(metadata_path, dtype={'image_id': str})
 
         # Create condition labels if not present
-        if 'condition_label' not in df.columns:
-            conditions = df['condition'].unique()
+        # Support both 'condition_label' and 'coarse_condition_label'
+        label_col = None
+        if 'coarse_condition_label' in df.columns:
+            label_col = 'coarse_condition_label'
+            condition_col = 'coarse_category'
+        elif 'condition_label' in df.columns:
+            label_col = 'condition_label'
+            condition_col = 'condition'
+
+        if label_col is None:
+            # Create labels from condition column
+            condition_col = 'condition'
+            conditions = df[condition_col].unique()
             condition_to_label = {cond: idx for idx, cond in enumerate(conditions)}
-            df['condition_label'] = df['condition'].map(condition_to_label)
+            df['condition_label'] = df[condition_col].map(condition_to_label)
+            label_col = 'condition_label'
         else:
+            # Use existing labels
             condition_to_label = dict(
-                zip(df['condition'].unique(), df['condition_label'].unique())
+                zip(df[condition_col].unique(), df[label_col].unique())
             )
+            # Rename to standard 'condition_label' if using coarse labels
+            if label_col == 'coarse_condition_label':
+                df['condition_label'] = df['coarse_condition_label']
+                df['condition'] = df['coarse_category']
 
         self.condition_labels = condition_to_label
 
-        # Split data
-        n = len(df)
-        test_size = int(n * self.test_split)
-        val_size = int(n * self.val_split)
-        train_size = n - test_size - val_size
+        # Check if splits are already defined in the metadata
+        if 'split' in df.columns:
+            # Use existing splits
+            train_df = df[df['split'] == 'train'].reset_index(drop=True)
+            val_df = df[df['split'] == 'val'].reset_index(drop=True)
+            test_df = df[df['split'] == 'test'].reset_index(drop=True)
+        else:
+            # Create random splits
+            n = len(df)
+            test_size = int(n * self.test_split)
+            val_size = int(n * self.val_split)
+            train_size = n - test_size - val_size
 
-        indices = np.random.permutation(n)
-        train_idx = indices[:train_size]
-        val_idx = indices[train_size:train_size + val_size]
-        test_idx = indices[train_size + val_size:]
+            indices = np.random.permutation(n)
+            train_idx = indices[:train_size]
+            val_idx = indices[train_size:train_size + val_size]
+            test_idx = indices[train_size + val_size:]
 
-        train_df = df.iloc[train_idx].reset_index(drop=True)
-        val_df = df.iloc[val_idx].reset_index(drop=True)
-        test_df = df.iloc[test_idx].reset_index(drop=True)
+            train_df = df.iloc[train_idx].reset_index(drop=True)
+            val_df = df.iloc[val_idx].reset_index(drop=True)
+            test_df = df.iloc[test_idx].reset_index(drop=True)
 
         return {
             'train': train_df,

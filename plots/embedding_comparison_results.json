@@ -1,0 +1,29 @@
+{
+  "vanilla": {
+    "silhouette": 0.025387562811374664,
+    "ari": 0.010312252222053044,
+    "nmi": 0.31898853945076194,
+    "homogeneity": 0.38035376365224954,
+    "completeness": 0.2746734799234076,
+    "v_measure": 0.31898853945076194,
+    "avg_purity": 0.27306129337935336,
+    "perfect_clusters": 1,
+    "n_clusters": 211
+  },
+  "finetuned": {
+    "silhouette": 0.23023970425128937,
+    "ari": 0.0030703963396929625,
+    "nmi": 0.2453062402988297,
+    "homogeneity": 0.2903489536313449,
+    "completeness": 0.21236189567488328,
+    "v_measure": 0.2453062402988297,
+    "avg_purity": 0.22477720020768835,
+    "perfect_clusters": 6,
+    "n_clusters": 211
+  },
+  "summary": {
+    "vanilla_wins": 6,
+    "finetuned_wins": 1,
+    "ties": 0
+  }
+}

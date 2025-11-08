@@ -1,0 +1,46 @@
+================================================================================
+EMBEDDING MODEL EVALUATION REPORT
+================================================================================
+Generated: 2025-11-03T22:58:29.460304
+
+METRICS COMPARISON
+--------------------------------------------------------------------------------
+Metric                    Vanilla SigLIP       Fine-tuned           Improvement    
+--------------------------------------------------------------------------------
+Accuracy@1                1.0000               1.0000               +0.00pp        
+HitRate@1                 1.0000               1.0000               +0.00pp        
+HitRate@10                1.0000               1.0000               +0.00pp        
+HitRate@20                1.0000               1.0000               +0.00pp        
+HitRate@5                 1.0000               1.0000               +0.00pp        
+MRR                       1.0000               1.0000               +0.00pp        
+Precision@1               1.0000               1.0000               +0.00pp        
+Precision@10              1.0000               1.0000               +0.00pp        
+Precision@20              1.0000               1.0000               +0.00pp        
+Precision@5               1.0000               1.0000               +0.00pp        
+Recall@1                  1.0000               1.0000               +0.00pp        
+Recall@10                 1.0000               1.0000               +0.00pp        
+Recall@20                 1.0000               1.0000               +0.00pp        
+Recall@5                  1.0000               1.0000               +0.00pp        
+
+================================================================================
+SUMMARY
+================================================================================
+
+Average improvement: +0.00 percentage points
+
+Best improvement: Accuracy@1 (+0.00pp)
+Worst performance: Accuracy@1 (+0.00pp)
+
+================================================================================
+INTERPRETATION
+================================================================================
+
+△ MARGINAL: Fine-tuned model performs similarly to vanilla SigLIP.
+  Check if more training data or epochs could help.
+
+Key Metrics Explanation:
+  - Recall@K: % of correct items found in top-K results
+  - Precision@K: % of top-K results that are actually correct
+  - MRR: Average position of first correct result (higher is better)
+  - Accuracy@1: Is the top result correct?
+  - HitRate@K: Did we find the correct condition in top-K?
